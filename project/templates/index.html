@@ -3,23 +3,60 @@
 	<head>
 		<meta charset="utf-8">
 		<title>AHP 3</title>
-		<script type="text/javascript" src="../static/d3/d3.v3.js"></script>
+		<script type="text/javascript" src="../static/js/d3.v3.js"></script>
+        <script type="text/javascript" src="../static/js/gauge.js"></script>
 		<style type="text/css">
-			path {
+		    #svg path {
 			        fill: lightgrey;
 			     }
 			circle {
+			        fill: forestgreen;
 			        opacity: 0.75;
 			       }
+		    g.pointer {
+		        fill: black;
+		        stroke: black;
+	        }
+
 		</style>
 	</head>
 	<body>
-		<script type="text/javascript">
 
-		    //DEMO VALUES
-		    var wbid_value = 2;
-		    var ag_value = 4;
-		    var bio_value = 8;
+        <datalist id="ticks">
+            <option>-8</option>
+            <option>-6</option>
+            <option>-4</option>
+            <option>-2</option>
+            <option>0</option>
+            <option>2</option>
+            <option>4</option>
+            <option>6</option>
+            <option>8</option>
+        </datalist>
+
+        <div id="sliders">
+            <p>AG<input type="range" id="wbidRange" min="-8" max="8" list="ticks" oninput="updateScores()">WBID</p>
+            <p>BIO<input type="range" id="agRange" min="-8" max="8" list="ticks" oninput="updateScores()">WBID</p>
+            <p>BIO<input type="range" id="bioRange" min="-8" max="8" list="ticks" oninput="updateScores()">AG</p>
+        </div>
+
+        <div id="cr-gauge"></div>
+
+        <script>
+            var crGauge = Gauge('#cr-gauge', {
+		        size: 300,
+		        clipWidth: 300,
+		        clipHeight: 300,
+		        ringWidth: 60,
+		        maxValue: 0.3,
+		        transitionMs: 4000,
+	        });
+	        crGauge.render();
+	        crGauge.update(0.175);
+        </script>
+
+
+		<script type="text/javascript">
 
 		    //MongoDB URL
 		    var mongodb = "http://localhost:5000/query="
@@ -44,69 +81,64 @@
 			//Create SVG element
 			var svg = d3.select("body")
 			            .append("svg")
+			            .attr("id", "svg")
 						.attr("width", width)
 						.attr("height", height);
 
-			//DEMO BUTTON
-			svg.selectAll("button")
-			    .data("Change!")
-			    .enter()
-			    .append("rect")
-			    .attr("height", 20)
-			    .attr("width", 20)
-			    .attr("fill", "green")
-			    .on("mouseover", function(d){
-			            d3.select(this).attr("fill", "blue");
-			    })
-			    .on("mouseout", function(d){
-			            d3.select(this).attr("fill", "green");
-			    })
-			    .on("click", function(d){
-			            update_scores(wbid_value, ag_value, bio_value);
-/*			            svg.selectAll("circle")
-			                .transition()
-			                .duration(500)
-			                .attr("fill", "blue")
-*/
-			    });
+			function convertValue(value){
+			    x = parseInt(value) + 1;
+			    if (x < 1){
+			        x -= 2;
+			        return "10" + Math.abs(x);
+			    } else {
+			        return x.toString();
+			    }
+			}
 
-			function update_scores(wbid, ag, bio){
-			        //Set query URL
-			        url = mongodb + wbid + "&" + ag + "&" + bio;
+			function updateScores(){
 
-			        //Load data from MongoDB
-			        d3.json(url, function(json){
+                //Get variables from Slider Controls
+                var wbid = convertValue(document.getElementById("wbidRange").value);
+                var ag = convertValue(document.getElementById("agRange").value);
+                var bio = convertValue(document.getElementById("bioRange").value);
 
-			            //Load FFP data
-			            d3.csv(csv_data, function(csv){
+                //Set query URL
+                url = mongodb + wbid + "&" + ag + "&" + bio;
 
-                            //Loop through once for each score in the json data
-			                for (var i = 0; i < json.scores.length; i++){
+                console.log(url);
 
-			                    var json_id = json.scores[i].site_id;
-			                    var score = json.scores[i].score;
+                //Load data from MongoDB
+                d3.json(url, function(json){
 
-			                    //Find the corresponding site in the csv data
-			                    for (var j = 0; j < csv.length; j++){
+                    //Load FFP data
+                    d3.csv(csv_data, function(csv){
 
-			                        var csv_id = csv[j].SITE_ID;
+                        //Loop through once for each score in the json data
+                        for (var i = 0; i < json.scores.length; i++){
 
-			                        if (json_id == csv_id){
+                            var json_id = json.scores[i].site_id;
+                            var score = json.scores[i].score;
 
-			                            csv[j].SCORE = score;
-			                            break;
-			                        }
-			                    }
-			                }
-			                svg.selectAll("circle")
-                                .data(csv)
-                                .transition()
-                                .duration(500)
-                                .attr("r", 5)
-                                .attr("fill", "orange");
-			            });
-			        });
-			};
+                            //Find the corresponding site in the csv data
+                            for (var j = 0; j < csv.length; j++){
+
+                                var csv_id = csv[j].SITE_ID;
+
+                                if (json_id == csv_id){
+                                    csv[j].SCORE = score * 1000;
+                                    break;
+                                }
+                            }
+                        }
+                        svg.selectAll("circle")
+                            .data(csv)
+                            .transition()
+                            .attr("r", function(d){
+                                return Math.sqrt(d.SCORE);
+                            });
+                    });
+                });
+			}
 
 			//Load in GeoJSON data
 			d3.json(geojson_data, function(json) {
@@ -131,11 +163,13 @@
                         .attr("cy", function(d){
                                 return projection([d.LON, d.LAT])[1];
                         })
-                        .attr("r", 5)
-                        .attr("fill", "red")
+                        .attr("r", 2)
                         .on("click", function(d){
-                                console.log(d.SCORE);
-                                //window.open(d.URL);
+                                if (event.ctrlKey){
+                                    d3.select(this).remove();
+                                } else {
+                                    window.open(d.URL);
+                                }
                         });
                 });
 			});
