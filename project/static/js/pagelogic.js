@@ -94,7 +94,7 @@ function updateScores() {
     //Set query URL
     url = mongodb + wbid + "&" + ag + "&" + bio;
 
-    console.log(url);
+    //console.log(url);
 
     //Load data from MongoDB
     d3.json(url, function(json) {
