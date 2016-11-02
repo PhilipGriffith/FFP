@@ -9,10 +9,10 @@ function Gauge(container, configuration) {
 
 		pointerWidth				: 5,
 		pointerTailLength			: 5,
-		pointerHeadLengthPercent	: 0.7,
+		pointerHeadLengthPercent	: 0.75,
 
 		minValue					: 0,
-		maxValue					: 0.3,
+		maxValue					: 0.2,
 
 		minAngle					: -90,
 		maxAngle					: 90,
@@ -20,10 +20,9 @@ function Gauge(container, configuration) {
 		transitionMs				: 750,
 
 		majorTicks					: 3,
-		labelFormat					: d3.format(',g'),
-		labelInset					: 10,
-
-		arcColorFn					: d3.interpolateHsl("green", d3.rgb('#3e6c0a'))
+		color0                      : "forestgreen",
+		color1                      : "goldenrod",
+		color2                      : "firebrick"
 	};
 	var range = undefined;
 	var r = undefined;
@@ -106,24 +105,18 @@ function Gauge(container, configuration) {
 		arcs.selectAll('path')
 				.data(tickData)
 			.enter().append('path')
-				//.attr('fill', function(d, i) {
-				//	return config.arcColorFn(d * i);
-				//})
-				.attr('d', arc);
-/*
-		var lg = svg.append('g')
-				.attr('class', 'label')
-				.attr('transform', centerTx);
-		lg.selectAll('text')
-				.data(ticks)
-			.enter().append('text')
-				.attr('transform', function(d) {
-					var ratio = scale(d);
-					var newAngle = config.minAngle + (ratio * range);
-					return 'rotate(' +newAngle +') translate(0,' +(config.labelInset - r) +')';
+				.attr('fill', function(d, i) {
+				    switch (i){
+				        case 0:
+				            return config.color0;
+				        case 1:
+				            return config.color1;
+				        case 2:
+				            return config.color2;
+					}
 				})
-				.text(config.labelFormat);
-*/
+				.attr('d', arc);
+
 		var lineData = [ [config.pointerWidth / 2, 0],
 						[0, -pointerHeadLength],
 						[-(config.pointerWidth / 2), 0],
@@ -158,4 +151,18 @@ function Gauge(container, configuration) {
 	configure(configuration);
 
 	return that;
+}
+
+function updateGauge(value) {
+    var cr_gauge = 0;
+    if (value > 0.2) {
+        cr_gauge = 0.2;
+    } else {
+        cr_gauge = value;
+    }
+    if (value == 0) {
+        value = "0.0000";
+    }
+    crGauge.update(cr_gauge);
+    document.getElementById("cr-number").innerHTML = value;
 }

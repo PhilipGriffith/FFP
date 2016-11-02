@@ -3,22 +3,9 @@
 	<head>
 		<meta charset="utf-8">
 		<title>AHP 3</title>
+        <link rel="stylesheet" href="../static/css/styles.css">
 		<script type="text/javascript" src="../static/js/d3.v3.js"></script>
         <script type="text/javascript" src="../static/js/gauge.js"></script>
-		<style type="text/css">
-		    #svg path {
-			        fill: lightgrey;
-			     }
-			circle {
-			        fill: forestgreen;
-			        opacity: 0.75;
-			       }
-		    g.pointer {
-		        fill: black;
-		        stroke: black;
-	        }
-
-		</style>
 	</head>
 	<body>
 
@@ -35,145 +22,15 @@
         </datalist>
 
         <div id="sliders">
-            <p>AG<input type="range" id="wbidRange" min="-8" max="8" list="ticks" oninput="updateScores()">WBID</p>
-            <p>BIO<input type="range" id="agRange" min="-8" max="8" list="ticks" oninput="updateScores()">WBID</p>
-            <p>BIO<input type="range" id="bioRange" min="-8" max="8" list="ticks" oninput="updateScores()">AG</p>
+            <p>AG<input type="range" id="wbidRange" min="-8" max="8" list="ticks" onchange="updateScores()">WBID</p>
+            <p>BIO<input type="range" id="agRange" min="-8" max="8" list="ticks" onchange="updateScores()">WBID</p>
+            <p>BIO<input type="range" id="bioRange" min="-8" max="8" list="ticks" onchange="updateScores()">AG</p>
         </div>
 
         <div id="cr-gauge"></div>
+        <div id="cr-number"></div>
 
-        <script>
-            var crGauge = Gauge('#cr-gauge', {
-		        size: 300,
-		        clipWidth: 300,
-		        clipHeight: 300,
-		        ringWidth: 60,
-		        maxValue: 0.3,
-		        transitionMs: 4000,
-	        });
-	        crGauge.render();
-	        crGauge.update(0.175);
-        </script>
+        <script type="text/javascript" src="../static/js/pagelogic.js"></script>
 
-
-		<script type="text/javascript">
-
-		    //MongoDB URL
-		    var mongodb = "http://localhost:5000/query="
-		    var csv_data = "../static/data/ffp.csv"
-		    var geojson_data = "../static/geojson/florida.json"
-
-			//Width and height
-			var width = 700;
-			var height = 580;
-
-			//Define map projection
-			var projection = d3.geo.albers()
-			                        .scale(4000)
-			                        .rotate([83.5, -.6, 0])
-			                        .center([0, 27])
-			                        .translate([width/2, height/2]);
-
-			//Define path generator
-			var path = d3.geo.path()
-							 .projection(projection);
-
-			//Create SVG element
-			var svg = d3.select("body")
-			            .append("svg")
-			            .attr("id", "svg")
-						.attr("width", width)
-						.attr("height", height);
-
-			function convertValue(value){
-			    x = parseInt(value) + 1;
-			    if (x < 1){
-			        x -= 2;
-			        return "10" + Math.abs(x);
-			    } else {
-			        return x.toString();
-			    }
-			}
-
-			function updateScores(){
-
-                //Get variables from Slider Controls
-                var wbid = convertValue(document.getElementById("wbidRange").value);
-                var ag = convertValue(document.getElementById("agRange").value);
-                var bio = convertValue(document.getElementById("bioRange").value);
-
-                //Set query URL
-                url = mongodb + wbid + "&" + ag + "&" + bio;
-
-                console.log(url);
-
-                //Load data from MongoDB
-                d3.json(url, function(json){
-
-                    //Load FFP data
-                    d3.csv(csv_data, function(csv){
-
-                        //Loop through once for each score in the json data
-                        for (var i = 0; i < json.scores.length; i++){
-
-                            var json_id = json.scores[i].site_id;
-                            var score = json.scores[i].score;
-
-                            //Find the corresponding site in the csv data
-                            for (var j = 0; j < csv.length; j++){
-
-                                var csv_id = csv[j].SITE_ID;
-
-                                if (json_id == csv_id){
-                                    csv[j].SCORE = score * 1000;
-                                    break;
-                                }
-                            }
-                        }
-                        svg.selectAll("circle")
-                            .data(csv)
-                            .transition()
-                            .attr("r", function(d){
-                                return Math.sqrt(d.SCORE);
-                            });
-                    });
-                });
-			}
-
-			//Load in GeoJSON data
-			d3.json(geojson_data, function(json) {
-
-				//Bind data and create one path per GeoJSON feature
-				svg.selectAll("path")
-				   .data(json.features)
-				   .enter()
-				   .append("path")
-				   .attr("d", path);
-
-                // Load FFP data
-                d3.csv(csv_data, function(csv){
-
-                    svg.selectAll("circle")
-                        .data(csv)
-                        .enter()
-                        .append("circle")
-                        .attr("cx", function(d){
-                                return projection([d.LON, d.LAT])[0];
-                        })
-                        .attr("cy", function(d){
-                                return projection([d.LON, d.LAT])[1];
-                        })
-                        .attr("r", 2)
-                        .on("click", function(d){
-                                if (event.ctrlKey){
-                                    d3.select(this).remove();
-                                } else {
-                                    window.open(d.URL);
-                                }
-                        });
-                });
-			});
-
-		</script>
 	</body>
 </html>

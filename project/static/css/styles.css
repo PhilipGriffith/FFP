@@ -1,0 +1,17 @@
+body {
+    font-family: Arial;
+}
+#map path {
+    fill: lightgrey;
+}
+#map circle {
+    fill: forestgreen;
+    opacity: 0.75;
+}
+#cr-gauge g.pointer {
+    fill: midnightblue;
+    stroke: midnightblue;
+}
+#cr-gauge g.arc {
+    opacity: 0.65;
+}
