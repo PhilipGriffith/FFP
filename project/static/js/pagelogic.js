@@ -16,33 +16,37 @@ var crGauge = Gauge('#cr-gauge', {
 });
 crGauge.render();
 
-//Width and height
-var width = 700;
-var height = 580;
+//Map width and height
+var margin = {top: 20, right: 40, bottom: 20, left: 40};
+var map_width = 700;
+var map_height = 580 - margin.top - margin.bottom;
 
 //Define map projection
 var projection = d3.geo.albers()
                         .scale(4000)
                         .rotate([83.5, -.6, 0])
                         .center([0, 27])
-                        .translate([width/2, height/2]);
+                        .translate([map_width/2, map_height/2]);
 
 //Define path generator
 var path = d3.geo.path()
                  .projection(projection);
 
-//Create SVG element
-var svg = d3.select("body")
+//Create map element
+var map = d3.select("body")
             .append("svg")
             .attr("id", "map")
             .attr("width", width)
             .attr("height", height);
 
+//Create bar chart element
+
+
 //Load in GeoJSON data
 d3.json(geojson_data, function(json) {
 
     //Bind data and create one path per GeoJSON feature
-    svg.selectAll("path")
+    map.selectAll("path")
        .data(json.features)
        .enter()
        .append("path")
@@ -51,7 +55,7 @@ d3.json(geojson_data, function(json) {
     // Load FFP data
     d3.csv(csv_data, function(csv) {
 
-        svg.selectAll("circle")
+        map.selectAll("circle")
             .data(csv)
             .enter()
             .append("circle")
@@ -122,7 +126,7 @@ function updateScores() {
                     }
                 }
             }
-            svg.selectAll("circle")
+            map.selectAll("circle")
                 .data(csv)
                 .transition()
                 .attr("r", function(d) {
