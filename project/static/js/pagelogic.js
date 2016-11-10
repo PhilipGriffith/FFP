@@ -3,7 +3,7 @@ var mongodb = "http://localhost:5000/query="
 var csv_data = "../static/data/ffp.csv"
 var geojson_data = "../static/geojson/florida.json"
 
-//Create cr number
+//Create cr number display
 var cr = "0.0000";
 document.getElementById("cr-number").innerHTML = cr;
 
@@ -18,12 +18,9 @@ var crGauge = Gauge('#cr-gauge', {
 });
 crGauge.render();
 
-//Define margins
-var margin = {top: 20, right: 40, bottom: 20, left: 40};
-
 //Define map widths and heights
-var map_width = 700;
-var map_height = 580 - margin.top - margin.bottom;
+var map_width = 500;
+var map_height = 500;
 
 //Define map projection
 var projection = d3.geo.albers()
@@ -37,11 +34,13 @@ var path = d3.geo.path()
      .projection(projection);
 
 //Create map element
-var map = d3.select("body")
+var map = d3.select("#display")
     .append("svg")
     .attr("id", "map")
-    .attr("width", map_width + margin.right + margin.left)
-    .attr("height", map_height + margin.top + margin.bottom);
+    .attr("width", map_width)
+    .attr("height", map_height);
+
+//Build page content
 
 //Load in GeoJSON data
 d3.json(geojson_data, function(json) {
@@ -67,7 +66,10 @@ d3.json(geojson_data, function(json) {
             .attr("cy", function(d) {
                 return projection([d.LON, d.LAT])[1];
             })
-            .attr("r", 2);
+            .attr("r", 2)
+            .attr('id', function(d) {
+                return 'circle' + d.SITE_ID;
+            });
 
         //Get 10 highest scores for table
         csv.sort(byScore);
@@ -80,11 +82,17 @@ d3.json(geojson_data, function(json) {
             .enter()
             .append("tr");
 
+        //Create name cells
         tr.append("td")
-            .text(function(d) { return d.NAME; });
+            .text(function(d) {
+                return d.NAME;
+            });
 
+        //Create score cells
         tr.append('td')
-            .text(function(d) { return d.SCORE; });
+            .text(function(d) {
+                return d.SCORE;
+            });
     });
 });
 
@@ -110,6 +118,7 @@ function byScore(a, b) {
     return 0;
 }
 
+//Update page content
 function updateScores() {
 
     //Get variables from Slider Controls
@@ -162,9 +171,11 @@ function updateScores() {
             csv.sort(byScore);
             var top10 = csv.slice(0, 10);
 
-            //Update the table
+            //Reference DOM elements
             var old_tbody = document.getElementById('table');
             var new_tbody = document.createElement('tbody');
+
+            //Update the table
             var tr = d3.select(new_tbody)
             .attr('id', 'table')
             .selectAll("tr")
@@ -172,15 +183,11 @@ function updateScores() {
             .enter()
             .append("tr")
             .on('mouseover', function(d) {
-                var site = '#circle' + d.SITE_ID;
-                console.log(site);
-                d3.select(site)
+                d3.select('#circle' + d.SITE_ID)
                     .style('fill', 'blue');
             })
             .on('mouseout', function(d) {
-                var site = '#circle' + d.SITE_ID;
-                console.log(site);
-                d3.select(site)
+                d3.select('#circle' + d.SITE_ID)
                     .style('fill', 'forestgreen');
             });
 
@@ -189,11 +196,15 @@ function updateScores() {
                 .on('click', function(d) {
                     window.open(d.URL);
                 })
-                .text(function(d) { return d.NAME; });
+                .text(function(d) {
+                    return d.NAME;
+                });
 
             //Update score cells
             tr.append('td')
-                .text(function(d) { return Math.round(d.SCORE); });
+                .text(function(d) {
+                    return Math.round(d.SCORE);
+                });
 
             //Replace the old table with the new one
             old_tbody.parentNode.replaceChild(new_tbody, old_tbody);

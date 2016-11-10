@@ -2,14 +2,12 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>AHP 3</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Forever Project Selector</title>
         <link rel="stylesheet" href="../static/css/styles.css">
         <link rel="stylesheet" href="../static/css/bootstrap.v337.min.css">
 		<script type="text/javascript" src="../static/js/d3.v3.min.js"></script>
         <script type="text/javascript" src="../static/js/gauge.js"></script>
-	</head>
-	<body>
-
         <datalist id="ticks">
             <option>-8</option>
             <option>-6</option>
@@ -21,37 +19,44 @@
             <option>6</option>
             <option>8</option>
         </datalist>
-
-        <div id="sliders">
-            <p><span class="glyphicon glyphicon-grain"></span>
-                <span class="glyphicon glyphicon-tint"></span></p>
-            <input type="range" id="wbidRange" min="-8" max="8" list="ticks" onchange="updateScores()">
-            <p></p>
-            <p><span class="glyphicon glyphicon-leaf"></span>
-                <span class="glyphicon glyphicon-tint"></span></p>
-            <input type="range" id="agRange" min="-8" max="8" list="ticks" onchange="updateScores()">
-            <p><span class="glyphicon glyphicon-leaf"></span>
-                <span class="glyphicon glyphicon-grain"></span></p>
-            <input type="range" id="bioRange" min="-8" max="8" list="ticks" onchange="updateScores()">
+	</head>
+	<body>
+    <div class="container">
+        <div class="row top-buffer">
+            <div class="col-md-6" id="sliders">
+                    <span class="glyphicon glyphicon-grain"></span>
+                    <span class="glyphicon glyphicon-tint"></span>
+                    <input type="range" id="wbidRange" min="-8" max="8" list="ticks" onchange="updateScores()">
+                <br>
+                    <span class="glyphicon glyphicon-leaf left"></span>
+                    <span class="glyphicon glyphicon-tint right"></span>
+                    <input type="range" id="agRange" min="-8" max="8" list="ticks" onchange="updateScores()">
+                <br>
+                    <span class="glyphicon glyphicon-leaf left"></span>
+                    <span class="glyphicon glyphicon-grain right"></span>
+                    <input type="range" id="bioRange" min="-8" max="8" list="ticks" onchange="updateScores()">
+                <br>
+                <div class="center" id="cr-gauge"></div>
+                <div class="center" id="cr-number"></div>
+            </div>
+            <div class="col-md-6" id="display"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" id="chart">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Project</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table">
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <div id="cr-gauge"></div>
-        <div id="cr-number"></div>
-
-        <div id="chart">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Project</th>
-                        <th>Score</th>
-                    </tr>
-                </thead>
-                <tbody id="table">
-                </tbody>
-            </table>
-        </div>
-
-        <script type="text/javascript" src="../static/js/pagelogic.js"></script>
-
+    <script type="text/javascript" src="../static/js/pagelogic.js"></script>
+    </div>
 	</body>
 </html>
