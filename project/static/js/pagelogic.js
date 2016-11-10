@@ -67,15 +67,7 @@ d3.json(geojson_data, function(json) {
             .attr("cy", function(d) {
                 return projection([d.LON, d.LAT])[1];
             })
-            .attr("r", 2)
-            .on("click", function(d) {
-                if (event.ctrlKey) {
-                    d3.select(this).remove();
-                    updateScores();
-                } else {
-                    window.open(d.URL);
-                }
-            });
+            .attr("r", 2);
 
         //Get 10 highest scores for table
         csv.sort(byScore);
@@ -127,8 +119,6 @@ function updateScores() {
 
     //Set query URL
     url = mongodb + wbid + "&" + ag + "&" + bio;
-
-    console.log(url);
 
     //Load data from MongoDB
     d3.json(url, function(json) {
@@ -184,6 +174,9 @@ function updateScores() {
                 .on('click', function(d) {
                     window.open(d.URL);
                 })
+                .on('hover', function(d) {
+
+                })
                 .text(function(d) { return d.NAME; });
 
             //Update score cells
@@ -192,10 +185,11 @@ function updateScores() {
 
             //Replace the old table with the new one
             old_tbody.parentNode.replaceChild(new_tbody, old_tbody);
+
         });
+
+        //Update the gauge with the new cr value
+        updateGauge(cr);
+
     });
-
-    //Update the gauge with the new cr value
-    updateGauge(cr);
-
 }
