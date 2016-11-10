@@ -153,6 +153,9 @@ function updateScores() {
                 .transition()
                 .attr("r", function(d) {
                     return Math.sqrt(d.SCORE);
+                })
+                .attr('id', function(d) {
+                    return 'circle' + d.SITE_ID;
                 });
 
             //Get 10 highest scores for table
@@ -167,15 +170,24 @@ function updateScores() {
             .selectAll("tr")
             .data(top10)
             .enter()
-            .append("tr");
+            .append("tr")
+            .on('mouseover', function(d) {
+                var site = '#circle' + d.SITE_ID;
+                console.log(site);
+                d3.select(site)
+                    .style('fill', 'blue');
+            })
+            .on('mouseout', function(d) {
+                var site = '#circle' + d.SITE_ID;
+                console.log(site);
+                d3.select(site)
+                    .style('fill', 'forestgreen');
+            });
 
             //Update name cells
             tr.append("td")
                 .on('click', function(d) {
                     window.open(d.URL);
-                })
-                .on('hover', function(d) {
-
                 })
                 .text(function(d) { return d.NAME; });
 

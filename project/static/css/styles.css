@@ -12,3 +12,6 @@
 #cr-gauge g.arc {
     opacity: 0.65;
 }
+span {
+    font-size: 2.5em;
+}

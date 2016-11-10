@@ -23,9 +23,16 @@
         </datalist>
 
         <div id="sliders">
-            <p>AG<input type="range" id="wbidRange" min="-8" max="8" list="ticks" onchange="updateScores()">WBID</p>
-            <p>BIO<input type="range" id="agRange" min="-8" max="8" list="ticks" onchange="updateScores()">WBID</p>
-            <p>BIO<input type="range" id="bioRange" min="-8" max="8" list="ticks" onchange="updateScores()">AG</p>
+            <p><span class="glyphicon glyphicon-grain"></span>
+                <span class="glyphicon glyphicon-tint"></span></p>
+            <input type="range" id="wbidRange" min="-8" max="8" list="ticks" onchange="updateScores()">
+            <p></p>
+            <p><span class="glyphicon glyphicon-leaf"></span>
+                <span class="glyphicon glyphicon-tint"></span></p>
+            <input type="range" id="agRange" min="-8" max="8" list="ticks" onchange="updateScores()">
+            <p><span class="glyphicon glyphicon-leaf"></span>
+                <span class="glyphicon glyphicon-grain"></span></p>
+            <input type="range" id="bioRange" min="-8" max="8" list="ticks" onchange="updateScores()">
         </div>
 
         <div id="cr-gauge"></div>
