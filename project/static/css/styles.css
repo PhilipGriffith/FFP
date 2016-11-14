@@ -21,3 +21,6 @@ div {
 .top-buffer {
     margin-top: 30px;
 }
+.title {
+    font-size: 1.5em;
+}
