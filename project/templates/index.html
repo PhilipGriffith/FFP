@@ -23,19 +23,23 @@
 	<body>
     <div class="container">
         <div class="row top-buffer">
-            <div class="col-md-6" id="sliders">
-                    <span class="glyphicon glyphicon-grain"></span>
-                    <span class="glyphicon glyphicon-tint"></span>
-                    <input type="range" id="wbidRange" min="-8" max="8" list="ticks" onchange="updateScores()">
-                <br>
-                    <span class="glyphicon glyphicon-leaf left"></span>
-                    <span class="glyphicon glyphicon-tint right"></span>
-                    <input type="range" id="agRange" min="-8" max="8" list="ticks" onchange="updateScores()">
-                <br>
-                    <span class="glyphicon glyphicon-leaf left"></span>
-                    <span class="glyphicon glyphicon-grain right"></span>
-                    <input type="range" id="bioRange" min="-8" max="8" list="ticks" onchange="updateScores()">
-                <br>
+            <div class="col-md-6 " id="sliders">
+                <div class="col-md-1 top-buffer"><span class="glyphicon glyphicon-thumbs-up"></span></div>
+                <div class="col-md-10 top-buffer"><span class="glyphicon glyphicon-resize-horizontal"></span></div>
+                <div class="col-md-1 top-buffer"><span class="glyphicon glyphicon-thumbs-up"></span></div>
+
+                <div class="col-md-1 top-buffer"><span class="glyphicon glyphicon-grain"></span></div>
+                <div class="col-md-10 top-buffer"><input type="range" id="wbidRange" min="-8" max="8" list="ticks" onchange="updateScores()"></div>
+                <div class="col-md-1 top-buffer"><span class="glyphicon glyphicon-tint"></span></div>
+
+                <div class="col-md-1 top-buffer"><span class="glyphicon glyphicon-leaf"></span></div>
+                <div class="col-md-10 top-buffer"><input type="range" id="agRange" min="-8" max="8" list="ticks" onchange="updateScores()"></div>
+                <div class="col-md-1 top-buffer"><span class="glyphicon glyphicon-tint"></span></div>
+
+                <div class="col-md-1 top-buffer"><span class="glyphicon glyphicon-leaf"></span></div>
+                <div class="col-md-10 top-buffer"><input type="range" id="bioRange" min="-8" max="8" list="ticks" onchange="updateScores()"></div>
+                <div class="col-md-1 top-buffer"><span class="glyphicon glyphicon-grain"></span></div>
+
                 <div class="center" id="cr-gauge"></div>
                 <div class="center" id="cr-number"></div>
             </div>
