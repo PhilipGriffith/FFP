@@ -1,9 +1,8 @@
-import json
 import csv
 import itertools
 
 from pymongo import MongoClient
-import AHP_structured as ahp
+import ahpy
 
 labels = []
 wbid = ''
@@ -26,9 +25,9 @@ ag_m = ag.rstrip(';')
 bio_m = bio.rstrip(';')
 
 # Create Compare objects
-wbid = ahp.Compare('wbid', wbid_m, labels, comp_type='quant')
-ag = ahp.Compare('ag', ag_m, labels, comp_type='quant')
-bio = ahp.Compare('bio', bio_m, labels, comp_type='quant')
+wbid = ahpy.Compare('wbid', wbid_m, labels, comp_type='quant')
+ag = ahpy.Compare('ag', ag_m, labels, comp_type='quant')
+bio = ahpy.Compare('bio', bio_m, labels, comp_type='quant')
 
 # Build all possible criteria combinations
 combo_list = [str(i) for i in xrange(1, 10)]
@@ -49,8 +48,8 @@ cri_labels = ('water', 'ag', 'bio')
 cri_name = 'scores'
 doc_list = []
 for cri_m in matrix_list:
-    cri = ahp.Compare(cri_name, cri_m, cri_labels)
-    com = ahp.Compose(cri_name, cri, (wbid, ag, bio))
+    cri = ahpy.Compare(cri_name, cri_m, cri_labels)
+    com = ahpy.Compose(cri_name, cri, (wbid, ag, bio))
 
     # Create the MongoDB document
     score_list = []
